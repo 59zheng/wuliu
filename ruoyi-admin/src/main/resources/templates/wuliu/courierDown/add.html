@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('新增快递单管理')" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-courier-add">
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">发件人：</label>
+                <div class="col-sm-8">
+                    <input name="createname" class="form-control" type="text">
+                </div>
+            </div>
+
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">创建时间：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input name="cratetime" class="form-control" placeholder="yyyy-MM-dd HH:mm" type="text">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">快递公司名字：</label>
+                <div class="col-sm-8">
+                    <select name="couriercompany" class="form-control m-b" th:with="type=${@dict.getType('couriercompany')}">
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">收件人详细地址：</label>
+                <div class="col-sm-8">
+                    <input name="downdress" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">订单编号：</label>
+                <div class="col-sm-8">
+                    <input name="tasknum" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">选择地区：</label>
+                <div class="col-sm-8">
+                    <div class="layui-inline col-sm-4" >
+                        <label class="control-label">省份：</label>
+                        <select class="form-control valid" name="province" id="province"  style="width: 80px;display: inline-block;padding:6px 4px;" onchange="changeCity()">
+                            <option value="">请选择</option>
+                        </select>
+                        <input name="sheng" style="display: none"id="sheng" >
+                    </div>
+                    <div class="layui-inline col-sm-4">
+                        <label class="control-label">市：</label>
+                        <select  class="form-control valid" name="city" id="city" style="width: 80px;display: inline-block;padding:6px 4px;" onchange="changeCounty()">
+                            <option value="">请选择</option>
+                        </select>
+                        <input name="shi" style="display: none" id="shi">
+                    </div>
+                    <div class="layui-inline col-sm-4">
+                        <label class="control-label">县：</label>
+                        <select  class="form-control valid"name="xian" id="county"  style="width: 80px;display: inline-block;padding:6px 4px;">
+                            <option value="">请选择</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">收件人姓名：</label>
+                <div class="col-sm-8">
+                    <input name="downName" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">收件人手机号：</label>
+                <div class="col-sm-8">
+                    <input name="downPhone" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">发件人手机号：</label>
+                <div class="col-sm-8">
+                    <input name="createPhone" class="form-control" type="text">
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: datetimepicker-js" />
+    <script type="text/javascript">
+
+
+
+           //初始化省份
+        $(function(){
+            $.ajax({
+                url: '/system/province/provincelist',
+                type:'get',
+                success:function (result) {
+                    if (result != null && result.length>0){
+                        var province=$('#province');
+                        province.empty();
+                        province.append('<option value="'+""+'">'+"请选择"+'</option>');
+                        for (var i= 0;i< result.length; i++){
+                            province.append('<option value="'+result[i].provinceid+'">'+result[i].province+'</option>');
+                        }
+                    }
+                }
+            });
+        });
+
+        // 改变省份后修改市
+        function changeCity() {
+           var province = $("#province").val();
+           var sheng = $("#province").find("option:selected").text();
+           $("#sheng").val(sheng);
+            $.ajax({
+                url: '/system/province/citylist',
+                data:{
+                    dbProvinceid: province
+                },
+                type:'get',
+                success:function (result) {
+                    if (result != null && result.length>0){
+                        var city=$('#city');
+                        city.empty();
+                        city.append('<option value="'+""+'">'+"请选择"+'</option>');
+                        for (var i= 0;i< result.length; i++){
+                            city.append('<option value="'+result[i].cityid+'">'+result[i].city+'</option>');
+                        }
+                    }
+                }
+            });
+        }
+
+        // 改变市后改变县
+        function changeCounty() {
+            var cityid = $("#city").val();
+            var shi = $("#city").find("option:selected").text();
+            $("#shi").val(shi);
+            $.ajax({
+                url: '/system/province/arealist',
+                data:{
+                    cityid: cityid
+                },
+                type:'get',
+                success:function (result) {
+                    if (result != null && result.length>0){
+                        var county =$('#county');
+                        county.empty();
+                        county.append('<option value="'+""+'">'+"请选择"+'</option>');
+                        for (var i= 0;i< result.length; i++){
+                            county.append('<option value="'+result[i].area+'">'+result[i].area+'</option>');
+                        }
+                    }
+                }
+            });
+        }
+        var prefix = ctx + "wuliu/courierDown"
+        $("#form-courier-add").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/add", $('#form-courier-add').serialize());
+            }
+        }
+
+        $("input[name='cratetime']").datetimepicker({
+            format: "yyyy-mm-dd hh:ii:ss",
+            autoclose: true
+        });
+    </script>
+</body>
+</html>

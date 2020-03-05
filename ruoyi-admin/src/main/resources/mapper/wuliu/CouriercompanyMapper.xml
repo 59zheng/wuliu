@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.wuliu.mapper.CouriercompanyMapper">
+    
+    <resultMap type="Couriercompany" id="CouriercompanyResult">
+        <result property="fwegiht"    column="fwegiht"    />
+        <result property="fprice"    column="fprice"    />
+        <result property="ladderwegiht"    column="ladderwegiht"    />
+        <result property="ladderprice"    column="ladderprice"    />
+        <result property="updatetime"    column="updatetime"    />
+        <result property="updatep"    column="updatep"    />
+        <result property="couriercompany"    column="couriercompany"    />
+        <result property="id"    column="id"    />
+    </resultMap>
+
+    <sql id="selectCouriercompanyVo">
+        select fwegiht, fprice, ladderwegiht, ladderprice, updatetime, updatep, couriercompany, id from wuliu_couriercompany
+    </sql>
+
+    <select id="selectCouriercompanyList" parameterType="Couriercompany" resultMap="CouriercompanyResult">
+        <include refid="selectCouriercompanyVo"/>
+        <where>
+            <if test="couriercompany != null  and couriercompany != ''"> and couriercompany = #{couriercompany}</if>
+        </where>
+    </select>
+    
+    <select id="selectCouriercompanyById" parameterType="Long" resultMap="CouriercompanyResult">
+        <include refid="selectCouriercompanyVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertCouriercompany" parameterType="Couriercompany" useGeneratedKeys="true" keyProperty="id">
+        insert into wuliu_couriercompany
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="fwegiht != null ">fwegiht,</if>
+            <if test="fprice != null ">fprice,</if>
+            <if test="ladderwegiht != null ">ladderwegiht,</if>
+            <if test="ladderprice != null ">ladderprice,</if>
+            <if test="updatetime != null ">updatetime,</if>
+            <if test="updatep != null  and updatep != ''">updatep,</if>
+            <if test="couriercompany != null  and couriercompany != ''">couriercompany,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="fwegiht != null ">#{fwegiht},</if>
+            <if test="fprice != null ">#{fprice},</if>
+            <if test="ladderwegiht != null ">#{ladderwegiht},</if>
+            <if test="ladderprice != null ">#{ladderprice},</if>
+            <if test="updatetime != null ">#{updatetime},</if>
+            <if test="updatep != null  and updatep != ''">#{updatep},</if>
+            <if test="couriercompany != null  and couriercompany != ''">#{couriercompany},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCouriercompany" parameterType="Couriercompany">
+        update wuliu_couriercompany
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="fwegiht != null ">fwegiht = #{fwegiht},</if>
+            <if test="fprice != null ">fprice = #{fprice},</if>
+            <if test="ladderwegiht != null ">ladderwegiht = #{ladderwegiht},</if>
+            <if test="ladderprice != null ">ladderprice = #{ladderprice},</if>
+            <if test="updatetime != null ">updatetime = #{updatetime},</if>
+            <if test="updatep != null  and updatep != ''">updatep = #{updatep},</if>
+            <if test="couriercompany != null  and couriercompany != ''">couriercompany = #{couriercompany},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCouriercompanyById" parameterType="Long">
+        delete from wuliu_couriercompany where id = #{id}
+    </delete>
+
+    <delete id="deleteCouriercompanyByIds" parameterType="String">
+        delete from wuliu_couriercompany where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

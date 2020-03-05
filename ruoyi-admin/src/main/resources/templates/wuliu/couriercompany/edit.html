@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改快递公司')" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-couriercompany-edit" th:object="${couriercompany}">
+            <input name="id" th:field="*{id}" type="hidden">
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">首重：</label>
+                <div class="col-sm-8">
+                    <input name="fwegiht" th:field="*{fwegiht}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">首价：</label>
+                <div class="col-sm-8">
+                    <input name="fprice" th:field="*{fprice}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">阶梯重量：</label>
+                <div class="col-sm-8">
+                    <input name="ladderwegiht" th:field="*{ladderwegiht}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">阶梯价格：</label>
+                <div class="col-sm-8">
+                    <input name="ladderprice" th:field="*{ladderprice}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">最后修改人：</label>
+                <div class="col-sm-8">
+                    <input name="updatep" th:field="*{updatep}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">快递公司名字：</label>
+                <div class="col-sm-8">
+                    <input name="couriercompany" th:field="*{couriercompany}" class="form-control" type="text">
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script type="text/javascript">
+        var prefix = ctx + "wuliu/couriercompany";
+        $("#form-couriercompany-edit").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/edit", $('#form-couriercompany-edit').serialize());
+            }
+        }
+    </script>
+</body>
+</html>

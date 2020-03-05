@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.wuliu.mapper.WuliuApplyMapper">
+    
+    <resultMap type="WuliuApply" id="WuliuApplyResult">
+        <result property="applyid"    column="applyid"    />
+        <result property="initiateName"    column="initiate_name"    />
+        <result property="isDispose"    column="is_dispose"    />
+        <result property="disponseName"    column="disponse_name"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="disponseTime"    column="disponse_time"    />
+        <result property="taskId"    column="task_id"    />
+        <result property="id"    column="id"    />
+        <result property="wuliuInternalId"    column="wuliu_internal_id"    />
+    </resultMap>
+
+    <sql id="selectWuliuApplyVo">
+        select applyid, initiate_name, is_dispose, disponse_name, create_time, disponse_time, task_id, id, wuliu_internal_id from wuliu_apply
+    </sql>
+
+    <select id="selectWuliuApplyList" parameterType="WuliuApply" resultMap="WuliuApplyResult">
+        <include refid="selectWuliuApplyVo"/>
+        <where>  
+            <if test="applyid != null "> and applyid = #{applyid}</if>
+            <if test="isDispose != null  and isDispose != ''"> and is_dispose = #{isDispose}</if>
+            <if test="disponseName != null  and disponseName != ''"> and disponse_name like concat('%', #{disponseName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectWuliuApplyById" parameterType="Long" resultMap="WuliuApplyResult">
+        <include refid="selectWuliuApplyVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertWuliuApply" parameterType="WuliuApply" useGeneratedKeys="true" keyProperty="id">
+        insert into wuliu_apply
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="applyid != null ">applyid,</if>
+            <if test="initiateName != null  and initiateName != ''">initiate_name,</if>
+            <if test="isDispose != null  and isDispose != ''">is_dispose,</if>
+            <if test="disponseName != null  and disponseName != ''">disponse_name,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="disponseTime != null ">disponse_time,</if>
+            <if test="taskId != null ">task_id,</if>
+            <if test="wuliuInternalId != null  and wuliuInternalId != ''">wuliu_internal_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="applyid != null ">#{applyid},</if>
+            <if test="initiateName != null  and initiateName != ''">#{initiateName},</if>
+            <if test="isDispose != null  and isDispose != ''">#{isDispose},</if>
+            <if test="disponseName != null  and disponseName != ''">#{disponseName},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="disponseTime != null ">#{disponseTime},</if>
+            <if test="taskId != null ">#{taskId},</if>
+            <if test="wuliuInternalId != null  and wuliuInternalId != ''">#{wuliuInternalId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateWuliuApply" parameterType="WuliuApply">
+        update wuliu_apply
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="applyid != null ">applyid = #{applyid},</if>
+            <if test="initiateName != null  and initiateName != ''">initiate_name = #{initiateName},</if>
+            <if test="isDispose != null  and isDispose != ''">is_dispose = #{isDispose},</if>
+            <if test="disponseName != null  and disponseName != ''">disponse_name = #{disponseName},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="disponseTime != null ">disponse_time = #{disponseTime},</if>
+            <if test="taskId != null ">task_id = #{taskId},</if>
+            <if test="wuliuInternalId != null  and wuliuInternalId != ''">wuliu_internal_id = #{wuliuInternalId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteWuliuApplyById" parameterType="Long">
+        delete from wuliu_apply where id = #{id}
+    </delete>
+
+    <delete id="deleteWuliuApplyByIds" parameterType="String">
+        delete from wuliu_apply where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.wuliu.mapper.WuliuInternalMapper">
+    
+    <resultMap type="WuliuInternal" id="WuliuInternalResult">
+        <result property="cratetime"    column="cratetime"    />
+        <result property="couriercompany"    column="courierCompany"    />
+        <result property="downdress"    column="downdress"    />
+        <result property="tasknum"    column="tasknum"    />
+        <result property="isDelete"    column="is_delete"    />
+        <result property="sheng"    column="sheng"    />
+        <result property="shi"    column="shi"    />
+        <result property="xian"    column="xian"    />
+        <result property="downName"    column="down_name"    />
+        <result property="downPhone"    column="down_phone"    />
+        <result property="createPhone"    column="create_phone"    />
+        <result property="internalNum"    column="internal_num"    />
+        <result property="id"    column="id"    />
+        <result property="direction"    column="direction"    />
+        <result property="villagePointName"    column="village_point_name"    />
+    </resultMap>
+
+    <sql id="selectWuliuInternalVo">
+        select cratetime, courierCompany, downdress, tasknum, is_delete, sheng, shi, xian, down_name, down_phone, create_phone, internal_num, id,  direction, village_point_name from wuliu_internal
+    </sql>
+
+    <select id="selectWuliuInternalList" parameterType="WuliuInternal" resultMap="WuliuInternalResult">
+        <include refid="selectWuliuInternalVo"/>
+        <where>  
+            <if test="couriercompany != null  and couriercompany != ''"> and courierCompany = #{couriercompany}</if>
+            <if test="sheng != null  and sheng != ''"> and sheng = #{sheng}</if>
+            <if test="shi != null  and shi != ''"> and shi = #{shi}</if>
+            <if test="xian != null  and xian != ''"> and xian = #{xian}</if>
+            <if test="direction != null  and direction != ''"> and direction = #{direction}</if>
+            <if test="villagePointName != null  and villagePointName != ''"> and village_point_name = #{villagePointName}</if>
+        </where>
+    </select>
+    
+    <select id="selectWuliuInternalById" parameterType="Long" resultMap="WuliuInternalResult">
+        <include refid="selectWuliuInternalVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectByInternalId" parameterType="string" resultMap="WuliuInternalResult">
+        <include refid="selectWuliuInternalVo"/>
+        where internal_num = #{wuliuInternalId}
+    </select>
+        
+    <insert id="insertWuliuInternal" parameterType="WuliuInternal" useGeneratedKeys="true" keyProperty="id">
+        insert into wuliu_internal
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="cratetime != null ">cratetime,</if>
+            <if test="couriercompany != null  and couriercompany != ''">courierCompany,</if>
+            <if test="downdress != null  and downdress != ''">downdress,</if>
+            <if test="tasknum != null  and tasknum != ''">tasknum,</if>
+            <if test="isDelete != null  and isDelete != ''">is_delete,</if>
+            <if test="sheng != null  and sheng != ''">sheng,</if>
+            <if test="shi != null  and shi != ''">shi,</if>
+            <if test="xian != null  and xian != ''">xian,</if>
+            <if test="downName != null  and downName != ''">down_name,</if>
+            <if test="downPhone != null  and downPhone != ''">down_phone,</if>
+            <if test="createPhone != null  and createPhone != ''">create_phone,</if>
+            <if test="internalNum != null  and internalNum != ''">internal_num,</if>
+            <if test="direction != null  and direction != ''">direction,</if>
+            <if test="villagePointName != null  and villagePointName != ''">village_point_name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="cratetime != null ">#{cratetime},</if>
+            <if test="couriercompany != null  and couriercompany != ''">#{couriercompany},</if>
+            <if test="downdress != null  and downdress != ''">#{downdress},</if>
+            <if test="tasknum != null  and tasknum != ''">#{tasknum},</if>
+            <if test="isDelete != null  and isDelete != ''">#{isDelete},</if>
+            <if test="sheng != null  and sheng != ''">#{sheng},</if>
+            <if test="shi != null  and shi != ''">#{shi},</if>
+            <if test="xian != null  and xian != ''">#{xian},</if>
+            <if test="downName != null  and downName != ''">#{downName},</if>
+            <if test="downPhone != null  and downPhone != ''">#{downPhone},</if>
+            <if test="createPhone != null  and createPhone != ''">#{createPhone},</if>
+            <if test="internalNum != null  and internalNum != ''">#{internalNum},</if>
+            <if test="direction != null  and direction != ''">#{direction},</if>
+            <if test="villagePointName != null  and villagePointName != ''">#{villagePointName},</if>
+         </trim>
+    </insert>
+
+    <update id="updateWuliuInternal" parameterType="WuliuInternal">
+        update wuliu_internal
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="cratetime != null ">cratetime = #{cratetime},</if>
+            <if test="couriercompany != null  and couriercompany != ''">courierCompany = #{couriercompany},</if>
+            <if test="downdress != null  and downdress != ''">downdress = #{downdress},</if>
+            <if test="tasknum != null  and tasknum != ''">tasknum = #{tasknum},</if>
+            <if test="isDelete != null  and isDelete != ''">is_delete = #{isDelete},</if>
+            <if test="sheng != null  and sheng != ''">sheng = #{sheng},</if>
+            <if test="shi != null  and shi != ''">shi = #{shi},</if>
+            <if test="xian != null  and xian != ''">xian = #{xian},</if>
+            <if test="downName != null  and downName != ''">down_name = #{downName},</if>
+            <if test="downPhone != null  and downPhone != ''">down_phone = #{downPhone},</if>
+            <if test="createPhone != null  and createPhone != ''">create_phone = #{createPhone},</if>
+            <if test="internalNum != null  and internalNum != ''">internal_num = #{internalNum},</if>
+            <if test="direction != null  and direction != ''">direction = #{direction},</if>
+            <if test="villagePointName != null  and villagePointName != ''">village_point_name = #{villagePointName},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteWuliuInternalById" parameterType="Long">
+        delete from wuliu_internal where id = #{id}
+    </delete>
+
+    <delete id="deleteWuliuInternalByIds" parameterType="String">
+        delete from wuliu_internal where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

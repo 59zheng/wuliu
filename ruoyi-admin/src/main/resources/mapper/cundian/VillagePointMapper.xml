@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.cundian.mapper.VillagePointMapper">
+
+    <resultMap type="VillagePoint" id="VillagePointResult">
+        <result property="id"    column="id"    />
+        <result property="villageName"    column="village_name"    />
+        <result property="provinces"    column="provinces"    />
+        <result property="cities"    column="cities"    />
+        <result property="counties"    column="counties"    />
+        <result property="address"    column="address"    />
+        <result property="longitude"    column="longitude"    />
+        <result property="latitude"    column="latitude"    />
+        <result property="isEnable"    column="is_enable"    />
+        <result property="head"    column="head"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="headPhone"    column="head_phone"    />
+        <result property="examinationName"    column="examination_name"    />
+        <result property="examinationPhone"    column="examination_phone"    />
+        <result property="examinationTime"    column="examination_time"    />
+        <result property="picture"    column="picture"    />
+        <result property="productId"    column="product_id"    />
+        <result property="parentName" column="parent_name" />
+    </resultMap>
+
+    <sql id="selectVillagePointVo">
+        select id, village_name, provinces, cities, counties, address, longitude, latitude, is_enable, head, create_time, head_phone, examination_name, examination_phone, examination_time, picture, product_id from village_point
+    </sql>
+
+    <select id="selectVillagePointList" parameterType="VillagePoint" resultMap="VillagePointResult">
+        <include refid="selectVillagePointVo"/>
+        <where>
+            <if test="villageName != null  and villageName != ''"> and village_name like concat('%', #{villageName}, '%')</if>
+            <if test="provinces != null  and provinces != ''"> and provinces = #{provinces}</if>
+            <if test="cities != null  and cities != ''"> and cities = #{cities}</if>
+            <if test="counties != null  and counties != ''"> and counties = #{counties}</if>
+            <if test="head != null  and head != ''"> and head = #{head}</if>
+            <if test="headPhone != null  and headPhone != ''"> and head_phone = #{headPhone}</if>
+            <if test="examinationName != null  and examinationName != ''"> and examination_name like concat('%', #{examinationName}, '%')</if>
+            <if test="examinationPhone != null  and examinationPhone != ''"> and examination_phone = #{examinationPhone}</if>
+        </where>
+        order by product_id
+    </select>
+
+    <select id="selectVillagePointById" parameterType="Long" resultMap="VillagePointResult">
+        select t.id, t.village_name, t.provinces, t.cities, t.counties, t.address, t.longitude, t.latitude, t.is_enable,
+        t.head, t.create_time, t.head_phone, t.examination_name, t.examination_phone, t.examination_time, t.picture,
+        t.product_id, p.village_name as parent_name
+        from village_point t
+        left join village_point p on p.id = t.product_id
+        where t.id = #{id}
+    </select>
+    <select id="selectbyvillageName" parameterType="string" resultMap="VillagePointResult">
+        select t.id, t.village_name, t.provinces, t.cities, t.counties, t.address, t.longitude, t.latitude, t.is_enable,
+        t.head, t.create_time, t.head_phone, t.examination_name, t.examination_phone, t.examination_time, t.picture,
+        t.product_id, p.village_name as parent_name
+        from village_point t
+        left join village_point p on p.id = t.product_id
+        where t.village_name = #{station}
+    </select>
+
+    <insert id="insertVillagePoint" parameterType="VillagePoint" useGeneratedKeys="true" keyProperty="id">
+        insert into village_point
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="villageName != null  and villageName != ''">village_name,</if>
+            <if test="provinces != null  and provinces != ''">provinces,</if>
+            <if test="cities != null  and cities != ''">cities,</if>
+            <if test="counties != null  and counties != ''">counties,</if>
+            <if test="address != null  and address != ''">address,</if>
+            <if test="longitude != null  and longitude != ''">longitude,</if>
+            <if test="latitude != null  and latitude != ''">latitude,</if>
+            <if test="isEnable != null  and isEnable != ''">is_enable,</if>
+            <if test="head != null  and head != ''">head,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="headPhone != null  and headPhone != ''">head_phone,</if>
+            <if test="examinationName != null  and examinationName != ''">examination_name,</if>
+            <if test="examinationPhone != null  and examinationPhone != ''">examination_phone,</if>
+            <if test="examinationTime != null ">examination_time,</if>
+            <if test="picture != null  and picture != ''">picture,</if>
+            <if test="productId != null ">product_id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="villageName != null  and villageName != ''">#{villageName},</if>
+            <if test="provinces != null  and provinces != ''">#{provinces},</if>
+            <if test="cities != null  and cities != ''">#{cities},</if>
+            <if test="counties != null  and counties != ''">#{counties},</if>
+            <if test="address != null  and address != ''">#{address},</if>
+            <if test="longitude != null  and longitude != ''">#{longitude},</if>
+            <if test="latitude != null  and latitude != ''">#{latitude},</if>
+            <if test="isEnable != null  and isEnable != ''">#{isEnable},</if>
+            <if test="head != null  and head != ''">#{head},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="headPhone != null  and headPhone != ''">#{headPhone},</if>
+            <if test="examinationName != null  and examinationName != ''">#{examinationName},</if>
+            <if test="examinationPhone != null  and examinationPhone != ''">#{examinationPhone},</if>
+            <if test="examinationTime != null ">#{examinationTime},</if>
+            <if test="picture != null  and picture != ''">#{picture},</if>
+            <if test="productId != null ">#{productId},</if>
+        </trim>
+    </insert>
+
+    <update id="updateVillagePoint" parameterType="VillagePoint">
+        update village_point
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="villageName != null  and villageName != ''">village_name = #{villageName},</if>
+            <if test="provinces != null  and provinces != ''">provinces = #{provinces},</if>
+            <if test="cities != null  and cities != ''">cities = #{cities},</if>
+            <if test="counties != null  and counties != ''">counties = #{counties},</if>
+            <if test="address != null  and address != ''">address = #{address},</if>
+            <if test="longitude != null  and longitude != ''">longitude = #{longitude},</if>
+            <if test="latitude != null  and latitude != ''">latitude = #{latitude},</if>
+            <if test="isEnable != null  and isEnable != ''">is_enable = #{isEnable},</if>
+            <if test="head != null  and head != ''">head = #{head},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="headPhone != null  and headPhone != ''">head_phone = #{headPhone},</if>
+            <if test="examinationName != null  and examinationName != ''">examination_name = #{examinationName},</if>
+            <if test="examinationPhone != null  and examinationPhone != ''">examination_phone = #{examinationPhone},
+            </if>
+            <if test="examinationTime != null ">examination_time = #{examinationTime},</if>
+            <if test="picture != null  and picture != ''">picture = #{picture},</if>
+            <if test="productId != null ">product_id = #{productId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteVillagePointById" parameterType="Long">
+        delete from village_point where id = #{id}
+    </delete>
+
+    <delete id="deleteVillagePointByIds" parameterType="String">
+        delete from village_point where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <select id="selectbyid" parameterType="Long" resultMap="VillagePointResult">
+        select t.id, t.village_name, t.provinces, t.cities, t.counties, t.address, t.longitude, t.latitude, t.is_enable,
+        t.head, t.create_time, t.head_phone, t.examination_name, t.examination_phone, t.examination_time, t.picture,
+        t.product_id, t.village_name as parent_name
+        from village_point t
+        where t.id = #{id} or t.product_id=#{id}
+    </select>
+
+
+
+
+
+</mapper>

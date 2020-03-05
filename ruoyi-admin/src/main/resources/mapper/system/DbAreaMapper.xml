@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.DbAreaMapper">
+    
+    <resultMap type="DbArea" id="DbAreaResult">
+        <result property="id"    column="id"    />
+        <result property="areaid"    column="areaid"    />
+        <result property="area"    column="area"    />
+        <result property="cityid"    column="cityid"    />
+    </resultMap>
+
+    <sql id="selectDbAreaVo">
+        select id, areaid, area, cityid from db_area
+    </sql>
+
+    <select id="selectDbAreaList" parameterType="DbArea" resultMap="DbAreaResult">
+        <include refid="selectDbAreaVo"/>
+        <where>  
+            <if test="areaid != null  and areaid != ''"> and areaid = #{areaid}</if>
+            <if test="area != null  and area != ''"> and area = #{area}</if>
+            <if test="cityid != null  and cityid != ''"> and cityid = #{cityid}</if>
+        </where>
+    </select>
+    
+    <select id="selectDbAreaById" parameterType="Long" resultMap="DbAreaResult">
+        <include refid="selectDbAreaVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectcityid" parameterType="string" resultMap="DbAreaResult">
+        <include refid="selectDbAreaVo"/>
+        where cityid = #{cityid}
+    </select>
+        
+    <insert id="insertDbArea" parameterType="DbArea" useGeneratedKeys="true" keyProperty="id">
+        insert into db_area
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="areaid != null  and areaid != ''">areaid,</if>
+            <if test="area != null  and area != ''">area,</if>
+            <if test="cityid != null  and cityid != ''">cityid,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="areaid != null  and areaid != ''">#{areaid},</if>
+            <if test="area != null  and area != ''">#{area},</if>
+            <if test="cityid != null  and cityid != ''">#{cityid},</if>
+         </trim>
+    </insert>
+
+    <update id="updateDbArea" parameterType="DbArea">
+        update db_area
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="areaid != null  and areaid != ''">areaid = #{areaid},</if>
+            <if test="area != null  and area != ''">area = #{area},</if>
+            <if test="cityid != null  and cityid != ''">cityid = #{cityid},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteDbAreaById" parameterType="Long">
+        delete from db_area where id = #{id}
+    </delete>
+
+    <delete id="deleteDbAreaByIds" parameterType="String">
+        delete from db_area where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

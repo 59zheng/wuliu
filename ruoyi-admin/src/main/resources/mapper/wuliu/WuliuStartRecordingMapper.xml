@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.wuliu.mapper.WuliuStartRecordingMapper">
+    
+    <resultMap type="WuliuStartRecording" id="WuliuStartRecordingResult">
+        <result property="id"    column="id"    />
+        <result property="departureTime"    column="departure_time"    />
+        <result property="driveNum"    column="drive_num"    />
+        <result property="route"    column="route"    />
+        <result property="drivingStart"    column="driving_start"    />
+        <result property="returnCarTime"    column="return_car_time"    />
+        <result property="directorName"    column="director_name"    />
+    </resultMap>
+
+    <sql id="selectWuliuStartRecordingVo">
+        select id, departure_time, drive_num, route, driving_start, return_car_time, director_name from wuliu_start_recording
+    </sql>
+
+    <select id="selectWuliuStartRecordingList" parameterType="WuliuStartRecording" resultMap="WuliuStartRecordingResult">
+        <include refid="selectWuliuStartRecordingVo"/>
+        <where>  
+            <if test="driveNum != null  and driveNum != ''"> and drive_num = #{driveNum}</if>
+            <if test="route != null  and route != ''"> and route = #{route}</if>
+        </where>
+    </select>
+    
+    <select id="selectWuliuStartRecordingById" parameterType="Long" resultMap="WuliuStartRecordingResult">
+        <include refid="selectWuliuStartRecordingVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertWuliuStartRecording" parameterType="WuliuStartRecording" useGeneratedKeys="true" keyProperty="id">
+        insert into wuliu_start_recording
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="departureTime != null ">departure_time,</if>
+            <if test="driveNum != null  and driveNum != ''">drive_num,</if>
+            <if test="route != null  and route != ''">route,</if>
+            <if test="drivingStart != null  and drivingStart != ''">driving_start,</if>
+            <if test="returnCarTime != null ">return_car_time,</if>
+            <if test="directorName != null  and directorName != ''">director_name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="departureTime != null ">#{departureTime},</if>
+            <if test="driveNum != null  and driveNum != ''">#{driveNum},</if>
+            <if test="route != null  and route != ''">#{route},</if>
+            <if test="drivingStart != null  and drivingStart != ''">#{drivingStart},</if>
+            <if test="returnCarTime != null ">#{returnCarTime},</if>
+            <if test="directorName != null  and directorName != ''">#{directorName},</if>
+         </trim>
+    </insert>
+
+    <update id="updateWuliuStartRecording" parameterType="WuliuStartRecording">
+        update wuliu_start_recording
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="departureTime != null ">departure_time = #{departureTime},</if>
+            <if test="driveNum != null  and driveNum != ''">drive_num = #{driveNum},</if>
+            <if test="route != null  and route != ''">route = #{route},</if>
+            <if test="drivingStart != null  and drivingStart != ''">driving_start = #{drivingStart},</if>
+            <if test="returnCarTime != null ">return_car_time = #{returnCarTime},</if>
+            <if test="directorName != null  and directorName != ''">director_name = #{directorName},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteWuliuStartRecordingById" parameterType="Long">
+        delete from wuliu_start_recording where id = #{id}
+    </delete>
+
+    <delete id="deleteWuliuStartRecordingByIds" parameterType="String">
+        delete from wuliu_start_recording where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

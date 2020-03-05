@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('申请列表')" />
+    <style type="text/css">
+        body, html,#allmap {width: 100%;height: 100%;overflow: hidden;margin:0;font-family:"微软雅黑";}
+    </style>
+    <!--百度地图api导入-->
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=ArHN6agGSwc47Nbv4osdqy2jSCnv8Srj"></script>
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <p>申请单号：</p>
+                                <input type="text" name="applyid"/>
+                            </li>
+                            <li>
+                                <p>状态：</p>
+                                <select name="isDispose" th:with="type=${@dict.getType('applytype')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <p>处理人：</p>
+                                <input type="text" name="disponseName"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="wuliu:apply:add">
+                    <i class="fa fa-plus"></i> 添加
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="wuliu:apply:remove">
+                    <i class="fa fa-remove"></i> 删除
+                </a>
+                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="wuliu:apply:export">
+                    <i class="fa fa-download"></i> 导出
+                 </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+     <div id="allmap" style="display: none;">
+     </div>
+     <div id="delModal" style="display: none;">
+         <form class="form-horizontal m" id="form-apply-add">
+             <div class="form-group">
+                 <label class="col-sm-3 control-label">快递单号：</label>
+                 <div class="col-sm-8">
+                     <input name="createname"   id="createname" class="form-control" type="text">
+                 </div>
+                 <input name="id" style="display: none"id="updateId" >
+             </div>
+         </form>
+     </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('wuliu:apply:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('wuliu:apply:remove')}]];
+        var sendFlage = [[${@permission.hasPermi('wuliu:apply:send')}]];
+        var isDisposeDatas = [[${@dict.getType('applytype')}]];
+        var prefix = ctx + "wuliu/apply";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                modalName: "申请",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field : 'applyid',
+                    title : '申请单号'
+                },
+                {
+                    field : 'initiateName',
+                    title : '发起人'
+                },
+                {
+                    field : 'isDispose',
+                    title : '状态',
+                    formatter: function(value, row, index) {
+                       return $.table.selectDictLabel(isDisposeDatas, value);
+                    }
+                },
+                {
+                    field : 'disponseName',
+                    title : '处理人'
+                },
+                {
+                    field : 'disponseTime',
+                    title : '处理时间'
+                },
+                {
+                    field : 'taskId',
+                    title : '委派任务单号'
+                },
+                {
+                    field : 'id',
+                    title : '主键',
+                    visible: false
+                },
+                {
+                    field : 'wuliuInternalId',
+                    title : '关联的内部订单表'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        if (row.isDispose=="待处理"){
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>处理</a> ');
+                        }if (row.isDispose=="已完成"){
+                            actions.push('<a class="btn btn-success btn-xs ' + sendFlage +
+                                '" href="javascript:void(0)" onclick="send('+row.id+')"><i class="fa fa-save"></i>派送路径</a>');
+                        }
+                        if (row.isDispose=="已指派"){
+                            actions.push('<a class="btn btn-success btn-xs ' + sendFlage +
+                                '" href="javascript:void(0)" onclick="update('+row.id+')"><i class="fa fa-save"></i>配送完成</a>');
+                        }
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+        //单位新增
+        function send(id) {
+            layer.open({
+                type: 1,
+                shade: 0,
+                content: $("#allmap"),
+                area: ['1500px', '1000px'],
+                title: "配送路径",
+                id: "openModal"
+            });
+
+            $.ajax({
+                url: '/wuliu/apply/select',
+                type: 'get',
+                data: {
+                    id: id
+                },
+                success: function (result) {
+                    if (result != null) {
+                        var longitude = result.longitude;
+                        var latitude = result.latitude;
+                        save(longitude, latitude)
+
+
+                    }
+                }
+            });
+
+            function save(longitude,latitude) {
+                // 百度地图API功能
+                var map = new BMap.Map("allmap");
+                map.centerAndZoom(new BMap.Point(116.404, 39.915), 15);
+
+
+                var myP1 = new BMap.Point(112.556391, 37.876989);    //起点
+                console.log(longitude);
+                console.log(latitude);
+                var myP2 = new BMap.Point(longitude, latitude);    //终点
+
+                var myIcon = new BMap.Icon("/profile/upload/2019/12/12/9f37f70a46b5dfa7ff3ffb4349611555.png", new BMap.Size(32, 50), {    //小车图片
+                    //offset: new BMap.Size(0, -5),    //相当于CSS精灵
+                    imageOffset: new BMap.Size(0, 0)    //图片的偏移量。为了是图片底部中心对准坐标点。
+                });
+                var driving2 = new BMap.DrivingRoute(map, {renderOptions: {map: map, autoViewport: true}});    //驾车实例
+                driving2.search(myP1, myP2);    //显示一条公交线路
+
+                window.run = function () {
+                    var driving = new BMap.DrivingRoute(map);    //驾车实例
+                    driving.search(myP1, myP2);
+                    driving.setSearchCompleteCallback(function () {
+                        var pts = driving.getResults().getPlan(0).getRoute(0).getPath();    //通过驾车实例，获得一系列点的数组
+                        var paths = pts.length;    //获得有几个点
+
+                        var carMk = new BMap.Marker(pts[0], {icon: myIcon});
+                        map.addOverlay(carMk);
+                        i = 0;
+
+                        function resetMkPoint(i) {
+                            carMk.setPosition(pts[i]);
+                            if (i < paths) {
+                                setTimeout(function () {
+                                    i++;
+                                    resetMkPoint(i);
+                                }, 100);
+                            }
+                        }
+
+                        setTimeout(function () {
+                            resetMkPoint(5);
+                        }, 100)
+
+                    });
+                }
+
+                setTimeout(function () {
+                    run();
+                }, 1500);
+            }
+        }
+
+        //配送完成
+        function  update(id) {
+
+            layer.open({
+                type: 1,
+                shade: 0,
+                content: $("#delModal"),
+                area: ['800px', '600px'],
+                title: "快递信息",
+                id: "openModal",
+                btn: ['保存','关闭'],
+                yes:function(index){
+                    $("#updateId").val(id);
+                    var  createname=$("#createname").val();
+                    $.ajax({
+                        url: '/wuliu/apply/update',
+                        data:{
+                            id: id,
+                            createname:createname
+                        },
+                        type:'post',
+                        success:function (result) {
+                            location.reload();
+                            //layer.close(index); //关闭弹出框
+                        }
+                    });
+                }
+            });
+
+            /*function submitHandler() {
+                if ($.validate.form()) {
+                    $.operate.save( "/wuliu/apply/update", $('#form-apply-add').serialize());
+                }
+            }*/
+        }
+
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.wuliu.mapper.CourierMapper">
+
+    <resultMap type="Courier" id="CourierResult">
+        <result property="id" column="id"/>
+        <result property="createname" column="createname"/>
+        <result property="type" column="type"/>
+        <result property="cratetime" column="cratetime"/>
+        <result property="couriercompany" column="courierCompany"/>
+        <result property="downdress" column="downdress"/>
+        <result property="tasknum" column="tasknum"/>
+        <result property="isDelete" column="is_delete"/>
+        <result property="sheng" column="sheng"/>
+        <result property="shi" column="shi"/>
+        <result property="xian" column="xian"/>
+        <result property="downName" column="down_name"/>
+        <result property="downPhone" column="down_phone"/>
+        <result property="createPhone" column="create_phone"/>
+        <result property="villageName" column="village_name"/>
+        <result property="senderAddress" column="sender_address"/>
+    </resultMap>
+
+    <sql id="selectCourierVo">
+        select id, createname, type, cratetime, courierCompany, downdress, tasknum, sheng, shi, xian,sender_address,
+        down_name, down_phone,create_phone,village_name  from wuliu_courier
+    </sql>
+
+    <select id="selectCourierList" parameterType="Courier" resultMap="CourierResult">
+        <include refid="selectCourierVo"/>
+        <where>
+            is_delete="1"
+            <if test="createname != null  and createname != ''">and createname like concat('%', #{createname}, '%')</if>
+            <if test="type != null  and type != ''">and type = #{type}</if>
+            <if test="cratetime != null ">and cratetime = #{cratetime}</if>
+            <if test="couriercompany != null  and couriercompany != ''">and courierCompany = #{couriercompany}</if>
+            <if test="sheng != null  and sheng != ''">and sheng = #{sheng}</if>
+        </where>
+    </select>
+
+    <select id="selectCourierById" parameterType="Long" resultMap="CourierResult">
+        <include refid="selectCourierVo"/>
+        where id = #{id} and is_delete="1"
+    </select>
+
+    <insert id="insertCourier" parameterType="Courier" useGeneratedKeys="true" keyProperty="id">
+        insert into wuliu_courier
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="createname != null  and createname != ''">createname,</if>
+            <if test="type != null  and type != ''">type,</if>
+            <if test="cratetime != null ">cratetime,</if>
+            <if test="couriercompany != null  and couriercompany != ''">courierCompany,</if>
+            <if test="downdress != null  and downdress != ''">downdress,</if>
+            <if test="villageName != null  and villageName != ''">village_name,</if>
+            <if test="tasknum != null  and tasknum != ''">tasknum,</if>
+            <if test="isDelete != null  and isDelete != ''">is_delete,</if>
+            <if test="sheng != null  and sheng != ''">sheng,</if>
+            <if test="shi != null  and shi != ''">shi,</if>
+            <if test="xian != null  and xian != ''">xian,</if>
+            <if test="downName != null  and downName != ''">down_name,</if>
+            <if test="downPhone != null  and downPhone != ''">down_phone,</if>
+            <if test="createPhone != null  and createPhone != ''">create_phone,</if>
+            <if test="senderAddress != null  and senderAddress != ''">sender_address,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="createname != null  and createname != ''">#{createname},</if>
+            <if test="type != null  and type != ''">#{type},</if>
+            <if test="cratetime != null ">#{cratetime},</if>
+            <if test="couriercompany != null  and couriercompany != ''">#{couriercompany},</if>
+            <if test="downdress != null  and downdress != ''">#{downdress},</if>
+            <if test="villageName != null  and villageName != ''">#{villageName},</if>
+            <if test="tasknum != null  and tasknum != ''">#{tasknum},</if>
+            <if test="isDelete != null  and isDelete != ''">#{isDelete},</if>
+            <if test="sheng != null  and sheng != ''">#{sheng},</if>
+            <if test="shi != null  and shi != ''">#{shi},</if>
+            <if test="xian != null  and xian != ''">#{xian},</if>
+            <if test="downName != null  and downName != ''">#{downName},</if>
+            <if test="downPhone != null  and downPhone != ''">#{downPhone},</if>
+            <if test="createPhone != null  and createPhone != ''">#{createPhone},</if>
+            <if test="senderAddress != null  and senderAddress != ''">#{senderAddress},</if>
+        </trim>
+    </insert>
+
+    <update id="updateCourier" parameterType="Courier">
+        update wuliu_courier
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="createname != null  and createname != ''">createname = #{createname},</if>
+            <if test="type != null  and type != ''">type = #{type},</if>
+            <if test="cratetime != null ">cratetime = #{cratetime},</if>
+            <if test="couriercompany != null  and couriercompany != ''">courierCompany = #{couriercompany},</if>
+            <if test="downdress != null  and downdress != ''">downdress = #{downdress},</if>
+            <if test="tasknum != null  and tasknum != ''">tasknum = #{tasknum},</if>
+            <if test="isDelete != null  and isDelete != ''">is_delete = #{isDelete},</if>
+            <if test="villageName != null  and villageName != ''">is_delete = #{villageName},</if>
+            <if test="sheng != null  and sheng != ''">sheng = #{sheng},</if>
+            <if test="shi != null  and shi != ''">shi = #{shi},</if>
+            <if test="xian != null  and xian != ''">xian = #{xian},</if>
+            <if test="downName != null  and downName != ''">down_name = #{downName},</if>
+            <if test="downPhone != null  and downPhone != ''">down_phone = #{downPhone},</if>
+            <if test="createPhone != null  and createPhone != ''">create_phone = #{createPhone},</if>
+            <if test="senderAddress != null  and senderAddress != ''">sender_address = #{senderAddress},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCourierById" parameterType="Long">
+        update wuliu_courier SET is_delete="0"  where id = #{id}
+    </delete>
+
+    <delete id="deleteCourierByIds" parameterType="String">
+        update wuliu_courier SET is_delete="0" where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

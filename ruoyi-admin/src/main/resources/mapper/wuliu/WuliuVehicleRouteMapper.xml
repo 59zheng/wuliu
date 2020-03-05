@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.wuliu.mapper.WuliuVehicleRouteMapper">
+    
+    <resultMap type="WuliuVehicleRoute" id="WuliuVehicleRouteResult">
+        <result property="id"    column="id"    />
+        <result property="serialNumber"    column="serial_number"    />
+        <result property="path"    column="path"    />
+    </resultMap>
+
+    <sql id="selectWuliuVehicleRouteVo">
+        select id, serial_number, path from wuliu_vehicle_route
+    </sql>
+
+    <select id="selectWuliuVehicleRouteList" parameterType="WuliuVehicleRoute" resultMap="WuliuVehicleRouteResult">
+        <include refid="selectWuliuVehicleRouteVo"/>
+        <where>  
+            <if test="serialNumber != null  and serialNumber != ''"> and serial_number = #{serialNumber}</if>
+        </where>
+    </select>
+    
+    <select id="selectWuliuVehicleRouteById" parameterType="Long" resultMap="WuliuVehicleRouteResult">
+        <include refid="selectWuliuVehicleRouteVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertWuliuVehicleRoute" parameterType="WuliuVehicleRoute">
+        insert into wuliu_vehicle_route
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">id,</if>
+            <if test="serialNumber != null  and serialNumber != ''">serial_number,</if>
+            <if test="path != null  and path != ''">path,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null ">#{id},</if>
+            <if test="serialNumber != null  and serialNumber != ''">#{serialNumber},</if>
+            <if test="path != null  and path != ''">#{path},</if>
+         </trim>
+    </insert>
+
+    <update id="updateWuliuVehicleRoute" parameterType="WuliuVehicleRoute">
+        update wuliu_vehicle_route
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="serialNumber != null  and serialNumber != ''">serial_number = #{serialNumber},</if>
+            <if test="path != null  and path != ''">path = #{path},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteWuliuVehicleRouteById" parameterType="Long">
+        delete from wuliu_vehicle_route where id = #{id}
+    </delete>
+
+    <delete id="deleteWuliuVehicleRouteByIds" parameterType="String">
+        delete from wuliu_vehicle_route where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

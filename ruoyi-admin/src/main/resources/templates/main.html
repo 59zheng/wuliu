@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--360浏览器优先以webkit内核解析-->
+    <title>若依介绍</title>
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="../static/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link href="../static/css/font-awesome.min.css" th:href="@{/css/font-awesome.min.css}" rel="stylesheet"/>
+    <link href="../static/css/main/animate.min.css" th:href="@{/css/main/animate.min.css}" rel="stylesheet"/>
+    <link href="../static/css/main/style.min862f.css" th:href="@{/css/main/style.min862f.css}" rel="stylesheet"/>
+    <script src="https://code.highcharts.com.cn/highcharts/highcharts.js"></script>
+    <script src="https://code.highcharts.com.cn/highcharts/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com.cn/highcharts/modules/drilldown.js"></script>
+    <script src="https://img.hcharts.cn/highcharts-plugins/highcharts-zh_CN.js"></script>
+    <script src="https://code.highcharts.com.cn/highcharts/themes/grid-light.js"></script>
+
+</head>
+
+<body class="gray-bg">
+<div class="wrapper wrapper-content">
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="ibox float-e-margins" >
+                <div class="ibox-title">
+                    <!--<span class="label label-info pull-right">月</span>-->
+                    <h5>上行总量</h5>
+                </div>
+                <div class="ibox-content" >
+                    <h1 class="no-margins" id="upall">40 886,200</h1>
+                    <div class="stat-percent font-bold text-info"><!--98% <i class="fa fa-level-up"></i>-->
+                    </div>
+                    <small>总数量</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <!--<span class="label label-success pull-right">月</span>-->
+                    <h5>下行总量</h5>
+                </div>
+                <div class="ibox-content">
+                    <h1 class="no-margins" id="downall">40 886,200</h1>
+                    <div class="stat-percent font-bold text-info"><!--98% <i class="fa fa-level-up"></i>-->
+                    </div>
+                    <small>总数量</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3" onclick="send()">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <!--<span class="label label-info pull-right">月</span>-->
+                    <h5>总订单</h5>
+                </div>
+                <div class="ibox-content">
+                    <h1 class="no-margins" id="courierall">275,800</h1>
+                    <div class="stat-percent font-bold text-info"><!--20% <i class="fa fa-level-up"></i>-->
+                    </div>
+                    <small>总订单数</small>
+                </div>
+            </div>
+        </div>
+        <!--<div class="col-sm-3" onclick="cond()">-->
+            <!--<div class="ibox float-e-margins">-->
+                <!--<div class="ibox-title">-->
+                    <!--&lt;!&ndash;<span class="label label-success pull-right">月</span>&ndash;&gt;-->
+                    <!--<h5>村点</h5>-->
+                <!--</div>-->
+                <!--<div class="ibox-content">-->
+                    <!--<h1 class="no-margins" id="cundianall">106,120</h1>-->
+                    <!--<div class="stat-percent font-bold text-navy">44% <i class="fa fa-level-up"></i>-->
+                    <!--</div>-->
+                    <!--<small>村点数</small>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>订单</h5>
+
+                </div>
+                <div class="ibox-content">
+                    <div style="min-width: 200px; height: 375px; margin: 0 auto">
+                        <div class="col-sm-9">
+                            <div class="flot-chart">
+                                <div id="container" style="min-width: 200px; height: 375px; margin: 0 auto"></div>
+                            </div>
+                        </div>
+                        <!--<div class="col-sm-3">-->
+                            <!--<ul class="stat-list">-->
+                                <!--<li>-->
+                                    <!--<h2 class="no-margins" id="upnum">10,346</h2>-->
+                                    <!--<small>最近一个月上行数</small>-->
+                                    <!--<div class="stat-percent">48% <i class="fa fa-level-up text-navy"></i>-->
+                                    <!--</div>-->
+                                    <!--<div class="progress progress-mini">-->
+                                        <!--<div style="width: 48%;" class="progress-bar"></div>-->
+                                    <!--</div>-->
+                                <!--</li>-->
+                                <!--<li>-->
+                                    <!--<h2 class="no-margins" id="downnum">10,346</h2>-->
+                                    <!--<small>最近一个月下行数</small>-->
+                                    <!--<div class="stat-percent">48% <i class="fa fa-level-up text-navy"></i>-->
+                                    <!--</div>-->
+                                    <!--<div class="progress progress-mini">-->
+                                        <!--<div style="width: 48%;" class="progress-bar"></div>-->
+                                    <!--</div>-->
+                                <!--</li>-->
+                                <!--<li>-->
+                                    <!--<h2 class="no-margins " id="couriernum">2,422</h2>-->
+                                    <!--<small>最近一个月订单</small>-->
+                                    <!--<div class="stat-percent">48% <i class="fa fa-level-up text-navy"></i>-->
+                                    <!--</div>-->
+                                    <!--<div class="progress progress-mini">-->
+                                        <!--<div style="width: 60%;" class="progress-bar"></div>-->
+                                    <!--</div>-->
+                                <!--</li>-->
+
+                            <!--</ul>-->
+                        <!--</div>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>实时快递信息</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <table class="table table-hover no-margins">
+                        <thead>
+                        <tr>
+                            <th>快递单号</th>
+                            <th>日期</th>
+                            <th>寄件人</th>
+                            <!--<th>值</th>-->
+                        </tr>
+                        </thead>
+                        <tbody id="recentlyNum">
+                        <tr>
+                            <td456135413</td>
+                            <td>2019-08-9-09</td>
+                            <td>青衣5858</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<input type="text" id="AjaxData" hidden>
+</body>
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<script th:src="@{/ajax/libs/flot/jquery.flot.js}"></script>
+
+<th:block th:include="include :: sparkline-js"/>
+<script th:inline="javascript">
+
+    //物流统计页面
+    function send() {
+        window.location.href = '/wuliu/courier/saveStatistical';
+    }
+
+    //村点详情页面
+    function cond() {
+        window.location.href = '/cundian/distribution';
+    }
+
+    //    页面统计
+    $(document).ready(function () {
+        $.ajax({
+            url: '/wuliu/courier/censusAll',
+            type: 'get',
+            success: function (result) {
+                document.getElementById("courierall").innerHTML = result.courierNumAll;
+                document.getElementById("upall").innerHTML = result.upNumAll;
+                document.getElementById("downall").innerHTML = result.downNumAll;
+                // document.getElementById("couriernum").innerHTML = result.courierNum;
+                // document.getElementById("upnum").innerHTML = result.upNum;
+                // document.getElementById("downnum").innerHTML = result.downNum;
+            }
+        });
+        // $.ajax({
+        //     url: '/cundian/point/cundianNum',
+        //     type: 'get',
+        //     success: function (result) {
+        //         // console.log(result);
+        //         document.getElementById("cundianall").innerHTML = result;
+        //
+        //     }
+        // });
+        //最下边最近的10条数据
+        $.ajax({
+            url: '/wuliu/courier/recentlyNum',
+            type: 'get',
+            success: function (result) {
+                // console.log(result);
+                if (result != null && result.length > 0) {
+                    var county = $('#recentlyNum');
+                    county.empty();
+                    for (var i = 0; i < result.length; i++) {
+                        county.append('<tr><td> ' + result[i].tasknum + ' </td> <td>' + result[i].cratetime + '</td> <td>' + result[i].createname + '</td> </tr>');
+                    }
+                }
+
+            }
+        });
+    });
+
+    $(document).ready(function () {
+        //启动调用
+        var drilldown1;
+        $.ajax({
+            url: "/cundian/point/statistcalIndexTwo",
+            type: 'get',
+            success: function (result) {
+
+
+                drilldown1=result;
+                two();
+            }
+        });
+        function two() {
+            $.ajax({
+                url: "/cundian/point/statistcalIndex",
+                type: 'get',
+                success: function (result) {
+                    console.log(result);
+                    send(result);
+                }
+            });
+        }
+        function send(result) {
+            var VillageStatisticalVo = result;
+            // console.log(drilldown1);
+            // JS 代码
+            Highcharts.chart('container', {
+                chart: {
+                    type: 'column'
+                },
+                title: {
+                    text: '服务站订单数'
+                },
+                // subtitle: {
+                //     text: '点击可查看具体的版本数据，数据来源: <a href="https://netmarketshare.com">netmarketshare.com</a>.'
+                // },
+                xAxis: {
+                    type: 'category'
+                },
+                yAxis: {
+                    title: {
+                        text: '订单数'
+                    }
+                },
+                legend: {
+                    enabled: false
+                },
+                credits: {
+                    enabled: false
+                },
+                plotOptions: {
+                    series: {
+                        borderWidth: 0,
+                        dataLabels: {
+                            enabled: true,
+                            // format: '{point.y:.1f}%'
+                        }
+                    }
+                },
+                tooltip: {
+                    headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+                    pointFormat: '<span >{point.name}所属订单</span>: <b>{point.y}</b>件 <br/>'
+                },
+                series: [{
+                    name: '',
+                    colorByPoint: true,
+                    data: VillageStatisticalVo
+                }],
+                drilldown:drilldown1
+            });
+        }
+    });
+</script>
+</html>

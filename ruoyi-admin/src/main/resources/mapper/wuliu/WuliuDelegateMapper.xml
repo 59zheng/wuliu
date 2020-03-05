@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.wuliu.mapper.WuliuDelegateMapper">
+    
+    <resultMap type="WuliuDelegate" id="WuliuDelegateResult">
+        <result property="id"    column="id"    />
+        <result property="schedulingId"    column="scheduling_id"    />
+        <result property="villageName"    column="village_name"    />
+        <result property="villageType"    column="village_type"    />
+        <result property="estimatedTime"    column="estimated_time"    />
+        <result property="deliveryTime"    column="delivery_time"    />
+    </resultMap>
+
+    <sql id="selectWuliuDelegateVo">
+        select id, scheduling_id, village_name, village_type, estimated_time, delivery_time from wuliu_delegate
+    </sql>
+
+    <select id="selectWuliuDelegateList" parameterType="WuliuDelegate" resultMap="WuliuDelegateResult">
+        <include refid="selectWuliuDelegateVo"/>
+        <where>  
+            <if test="schedulingId != null  and schedulingId != ''"> and scheduling_id = #{schedulingId}</if>
+            <if test="villageName != null  and villageName != ''"> and village_name like concat('%', #{villageName}, '%')</if>
+            <if test="villageType != null  and villageType != ''"> and village_type = #{villageType}</if>
+        </where>
+    </select>
+    
+    <select id="selectWuliuDelegateById" parameterType="Long" resultMap="WuliuDelegateResult">
+        <include refid="selectWuliuDelegateVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertWuliuDelegate" parameterType="WuliuDelegate">
+        insert into wuliu_delegate
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">id,</if>
+            <if test="schedulingId != null  and schedulingId != ''">scheduling_id,</if>
+            <if test="villageName != null  and villageName != ''">village_name,</if>
+            <if test="villageType != null  and villageType != ''">village_type,</if>
+            <if test="estimatedTime != null  and estimatedTime != ''">estimated_time,</if>
+            <if test="deliveryTime != null ">delivery_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null ">#{id},</if>
+            <if test="schedulingId != null  and schedulingId != ''">#{schedulingId},</if>
+            <if test="villageName != null  and villageName != ''">#{villageName},</if>
+            <if test="villageType != null  and villageType != ''">#{villageType},</if>
+            <if test="estimatedTime != null  and estimatedTime != ''">#{estimatedTime},</if>
+            <if test="deliveryTime != null ">#{deliveryTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateWuliuDelegate" parameterType="WuliuDelegate">
+        update wuliu_delegate
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="schedulingId != null  and schedulingId != ''">scheduling_id = #{schedulingId},</if>
+            <if test="villageName != null  and villageName != ''">village_name = #{villageName},</if>
+            <if test="villageType != null  and villageType != ''">village_type = #{villageType},</if>
+            <if test="estimatedTime != null  and estimatedTime != ''">estimated_time = #{estimatedTime},</if>
+            <if test="deliveryTime != null ">delivery_time = #{deliveryTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteWuliuDelegateById" parameterType="Long">
+        delete from wuliu_delegate where id = #{id}
+    </delete>
+
+    <delete id="deleteWuliuDelegateByIds" parameterType="String">
+        delete from wuliu_delegate where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

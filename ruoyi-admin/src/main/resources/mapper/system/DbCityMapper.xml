@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.DbCityMapper">
+    
+    <resultMap type="DbCity" id="DbCityResult">
+        <result property="id"    column="id"    />
+        <result property="cityid"    column="cityid"    />
+        <result property="city"    column="city"    />
+        <result property="provinceid"    column="provinceid"    />
+    </resultMap>
+
+    <sql id="selectDbCityVo">
+        select id, cityid, city, provinceid from db_city
+    </sql>
+
+    <select id="selectDbCityList" parameterType="DbCity" resultMap="DbCityResult">
+        <include refid="selectDbCityVo"/>
+        <where>  
+            <if test="cityid != null  and cityid != ''"> and cityid = #{cityid}</if>
+            <if test="city != null  and city != ''"> and city = #{city}</if>
+            <if test="provinceid != null  and provinceid != ''"> and provinceid = #{provinceid}</if>
+        </where>
+    </select>
+    
+    <select id="selectDbCityById" parameterType="Long" resultMap="DbCityResult">
+        <include refid="selectDbCityVo"/>
+        where id = #{id}
+    </select>
+    <select id="selectprovinceid" parameterType="string" resultMap="DbCityResult">
+        <include refid="selectDbCityVo"/>
+        where provinceid = #{provinceid}
+    </select>
+        
+    <insert id="insertDbCity" parameterType="DbCity" useGeneratedKeys="true" keyProperty="id">
+        insert into db_city
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="cityid != null  and cityid != ''">cityid,</if>
+            <if test="city != null  and city != ''">city,</if>
+            <if test="provinceid != null  and provinceid != ''">provinceid,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="cityid != null  and cityid != ''">#{cityid},</if>
+            <if test="city != null  and city != ''">#{city},</if>
+            <if test="provinceid != null  and provinceid != ''">#{provinceid},</if>
+         </trim>
+    </insert>
+
+    <update id="updateDbCity" parameterType="DbCity">
+        update db_city
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="cityid != null  and cityid != ''">cityid = #{cityid},</if>
+            <if test="city != null  and city != ''">city = #{city},</if>
+            <if test="provinceid != null  and provinceid != ''">provinceid = #{provinceid},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteDbCityById" parameterType="Long">
+        delete from db_city where id = #{id}
+    </delete>
+
+    <delete id="deleteDbCityByIds" parameterType="String">
+        delete from db_city where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

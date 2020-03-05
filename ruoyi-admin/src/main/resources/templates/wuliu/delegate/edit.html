@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改委派单关联调度单')" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-delegate-edit" th:object="${wuliuDelegate}">
+            <input name="id" th:field="*{id}" type="hidden">
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">调度单号：</label>
+                <div class="col-sm-8">
+                    <input name="schedulingId" th:field="*{schedulingId}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">委派服务站：</label>
+                <div class="col-sm-8">
+                    <input name="villageName" th:field="*{villageName}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">预计所需时间：</label>
+                <div class="col-sm-8">
+                    <input name="estimatedTime" th:field="*{estimatedTime}" class="form-control" type="text">
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script type="text/javascript">
+        var prefix = ctx + "wuliu/delegate";
+        $("#form-delegate-edit").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/edit", $('#form-delegate-edit').serialize());
+            }
+        }
+    </script>
+</body>
+</html>

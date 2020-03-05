@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改任务单关联路径和车辆和内部运单')" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-task-edit" th:object="${wuliuTask}">
+            <input name="id" th:field="*{id}" type="hidden">
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">是否完成：</label>
+                <div class="col-sm-8">
+                    <input name="isReturn" th:field="*{isReturn}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">配送司机名字：</label>
+                <div class="col-sm-8">
+                    <input name="driverName" th:field="*{driverName}" class="form-control" type="text">
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script type="text/javascript">
+        var prefix = ctx + "wuliu/task";
+        $("#form-task-edit").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/edit", $('#form-task-edit').serialize());
+            }
+        }
+    </script>
+</body>
+</html>

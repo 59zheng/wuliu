@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('发车记录列表')" />
+    <style type="text/css">
+        body, html,#allmap {width: 100%;height: 100%;overflow: hidden;margin:0;font-family:"微软雅黑";}
+    </style>
+    <!--百度地图api导入-->
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=ArHN6agGSwc47Nbv4osdqy2jSCnv8Srj"></script>
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <p>车牌号：</p>
+                                <input type="text" name="driveNum"/>
+                            </li>
+                            <li>
+                                <p>行驶路线：</p>
+                                <input type="text" name="route"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="wuliu:recording:add">
+                    <i class="fa fa-plus"></i> 添加
+                </a>
+                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="wuliu:recording:edit">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="wuliu:recording:remove">
+                    <i class="fa fa-remove"></i> 删除
+                </a>
+                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="wuliu:recording:export">
+                    <i class="fa fa-download"></i> 导出
+                 </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+     <div id="allmap" style="display: none;">
+     </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('wuliu:recording:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('wuliu:recording:remove')}]];
+        var sendFlage = [[${@permission.hasPermi('wuliu:recording:send')}]];
+        var prefix = ctx + "wuliu/recording";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                modalName: "发车记录",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field : 'id', 
+                    title : '主键',
+                    visible: false
+                },
+                {
+                    field : 'departureTime', 
+                    title : '发车时间'
+                },
+                {
+                    field : 'driveNum', 
+                    title : '车牌号'
+                },
+                {
+                    field : 'route', 
+                    title : '行驶路线'
+                },
+                {
+                    field : 'drivingStart', 
+                    title : '行驶前检查情况'
+                },
+                {
+                    field : 'returnCarTime', 
+                    title : '归车时间'
+                },
+                {
+                    field : 'directorName', 
+                    title : '驾驶员'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs ' + sendFlage +
+                            '" href="javascript:void(0)" onclick="send('+row.id+')"><i class="fa fa-save"></i>派送路径</a>');
+                        actions.push('<a class="btn btn-danger btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="btn btn-success btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+    </script>
+<script>
+    //单位新增
+    function send(id) {
+        layer.open({
+            type: 1,
+            shade: 0,
+            content: $("#allmap"),
+            area: ['1500px', '1000px'],
+            title: "配送路径",
+            id: "openModal"
+        });
+
+        $.ajax({
+            url: '/wuliu/recording/path',
+            type: 'get',
+            data: {
+                id: id
+            },
+            success: function (result) {
+                if (result != null) {
+                    save(result)
+                }
+            }
+        });
+
+        function save(result) {
+
+
+// 百度地图API功能
+            var map = new BMap.Map("allmap");
+            map.centerAndZoom(new BMap.Point(116.404, 39.915), 11);
+            map.enableScrollWheelZoom(true);
+            //起点
+            // var p1 = new BMap.Point(result.get(0).longitude,result.get(0).latitude);
+            //终点
+            var way=[];
+            var p1 = new BMap.Point(111.2015100000, 34.8434840000);
+            var p2 = new BMap.Point(111.2015100000, 34.8434840000);
+            for(var i = 0;i<result.length;i++){  //循环LIST
+                var veh = result[i];//获取LIST里面的对象
+                // console.log(veh);
+                var p3 = new BMap.Point(veh.longitude, veh.latitude);
+
+                way.push(p3)
+            }
+            //途径点
+
+            var p4 = new BMap.Point(116.408757, 39.995704);
+
+            var driving = new BMap.DrivingRoute(map, {renderOptions: {map: map, autoViewport: true}});
+            driving.search(p1, p2, {waypoints: way});//waypoints表示途经点
+        }
+    }
+</script>
+</body>
+</html>

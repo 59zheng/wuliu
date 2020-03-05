@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('新增发车记录')" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-recording-add">
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">发车时间：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input name="departureTime" class="form-control" placeholder="yyyy-MM-dd HH:mm" type="text">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">车牌号：</label>
+                <div class="col-sm-8">
+                    <input name="driveNum" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">车牌号：</label>
+                <div class="col-sm-8">
+                    <select name="driveNum" class="form-control m-b" th:with="type=${@dict.getType('sys_user_sex')}">
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">行驶路线：</label>
+                <div class="col-sm-8">
+                    <input name="route" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">行驶前检查情况：</label>
+                <div class="col-sm-8">
+                    <input name="drivingStart" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">归车时间：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input name="returnCarTime" class="form-control" placeholder="yyyy-MM-dd HH:mm" type="text">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">主管名字：</label>
+                <div class="col-sm-8">
+                    <input name="directorName" class="form-control" type="text">
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: datetimepicker-js" />
+    <script type="text/javascript">
+        var prefix = ctx + "wuliu/recording"
+        $("#form-recording-add").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/add", $('#form-recording-add').serialize());
+            }
+        }
+
+        $("input[name='departureTime']").datetimepicker({
+            format: "yyyy-mm-dd hh:ii:ss",
+            autoclose: true
+        });
+        $("input[name='returnCarTime']").datetimepicker({
+            format: "yyyy-mm-dd hh:ii:ss",
+            autoclose: true
+        });
+
+    </script>
+</body>
+</html>

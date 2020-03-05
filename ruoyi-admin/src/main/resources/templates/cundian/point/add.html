@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('新增村点')"/>
+    <th:block th:include="include :: datetimepicker-css"/>
+    <!--百度地图api导入-->
+    <script type="text/javascript"
+            src="http://api.map.baidu.com/api?v=2.0&ak=ArHN6agGSwc47Nbv4osdqy2jSCnv8Srj"></script>
+    <link th:href="@{/css/layui.css}" rel="stylesheet" media="all"/>
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-point-add">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">村点名称：</label>
+            <div class="col-sm-8">
+                <input name="villageName" id="villageName" class="form-control" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">选择地区：</label>
+            <div class="col-sm-8">
+                <div class="layui-inline col-sm-4">
+                    <label class="control-label">省份：</label>
+                    <select class="form-control valid" name="sheng" id="sheng"
+                            style="width: 80px;display: inline-block;padding:6px 4px;" onchange="changeCity()">
+                        <option value="">请选择</option>
+                    </select>
+                    <input name="provinces" id="provinces" style="display: none" >
+                </div>
+                <div class="layui-inline col-sm-4">
+                    <label class="control-label">市：</label>
+                    <select class="form-control valid" name="shi" id="shi"
+                            style="width: 80px;display: inline-block;padding:6px 4px;" onchange="changeCounty()">
+                        <option value="">请选择</option>
+                    </select>
+                    <input name="cities" id="cities" style="display: none" >
+                </div>
+                <div class="layui-inline col-sm-4">
+                    <label class="control-label">县：</label>
+                    <select class="form-control valid" name="county" id="county"
+                            style="width: 80px;display: inline-block;padding:6px 4px;">
+                        <option value="">请选择</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">详细地址：</label>
+            <div class="col-sm-8">
+                <input name="address" id="address" class="form-control" type="text" placeholder="若获取地址不准确请自行填写">
+                <input type='button' value='点击显示地图获取经纬度' th:onclick="send()">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">经度：</label>
+            <div class="col-sm-8">
+                <input name="longitude" id="longitude" class="form-control" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">纬度：</label>
+            <div class="col-sm-8">
+                <input name="latitude" id="latitude" class="form-control" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">可选快递公司：</label>
+            <div class="col-sm-8" id="check" >
+          <!--     // <label class="checkbox-inline" id="check">
+                  &lt;!&ndash;  <div class="layui-inline col-sm-4">
+                        <input type="checkbox" id="11" name="company" value="1"> 选项1
+                    </div>&ndash;&gt;
+
+                </label>-->
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">负责人：</label>
+            <div class="col-sm-8">
+                <input name="head" id="head" class="form-control" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">负责人电话：</label>
+            <div class="col-sm-8">
+                <input name="headPhone" id="headPhone" class="form-control" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">审批人姓名：</label>
+            <div class="col-sm-8">
+                <input name="examinationName" id="examinationName" class="form-control" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">负责人身份证号：</label>
+            <div class="col-sm-8">
+                <input name="examinationPhone" id="examinationPhone" class="form-control" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">审批时间：</label>
+            <div class="col-sm-8">
+                <div class="input-group date">
+                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    <input name="examinationTime" id="examinationTime" class="form-control"
+                           placeholder="yyyy-MM-dd HH:mm" type="text">
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">图片信息：</label>
+            <div class="col-sm-8">
+                <input id="picture" name="picture" class="form-control" type="file">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">父级id：</label>
+            <div class="col-sm-8">
+                <div class="input-group">
+                    <input id="treeId" name="productId" type="hidden" th:value="${villagePoint?.id}"/>
+                    <input class="form-control" type="text" onclick="selectPointTree()" id="treeName" readonly="true"
+                           th:value="${villagePoint?.villageName}">
+                    <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div id='allmap' style='width: 100%; height: 100%; position: absolute; display: none'></div>
+
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: datetimepicker-js"/>
+<script type="text/javascript">
+
+    function click() {
+
+        // var id_array=new Array();
+        // $('input[name="company"]:checked').each(function(){
+        //     id_array.push($(this).val());//向数组中添加元素
+        // });
+        // var chapterstr = id_array.join(',');//将数组元素连接起来以构建一个字符串
+        // alert(chapterstr);
+        console.log(111)
+    }
+
+
+      //初始化快递公司
+      $(window).load(function () {
+          $.ajax({
+              url: '/wuliu/couriercompany/dropdown',
+              type: 'get',
+              success: function (result) {
+                  if (result.name != null && result.name.length > 0) {
+                      var check = $('#check');
+                      check.empty();
+                      /*debugger;*/
+                      var list=result.name;
+                      for (var i = 0; i < list.length; i++) {
+                          check.append('<label class="checkbox-inline" > <div style="width:auto;" class="layui-inline col-sm-4">' +
+                              '<input class="aaa" type="checkbox" id="11" name="company[]" value="' + list[i].couier + '"> '
+                              + list[i].couier + '</div> </label>');
+                      }
+                  }
+              }
+          });
+      });
+
+
+    //初始化省份
+    $(window).load(function () {
+        $.ajax({
+            url: '/system/province/provincelist',
+            type: 'get',
+            success: function (result) {
+                if (result != null && result.length > 0) {
+                    var province = $('#sheng');
+                    province.empty();
+                    province.append('<option value="' + "" + '">' + "请选择" + '</option>');
+                    for (var i = 0; i < result.length; i++) {
+                        province.append('<option value="' + result[i].provinceid + '">' + result[i].province + '</option>');
+                    }
+                }
+            }
+        });
+    });
+
+    // 改变省份后修改市
+    function changeCity() {
+        var province = $("#sheng").val();
+        var sheng = $("#sheng").find("option:selected").text();
+        $("#provinces").val(sheng);
+        $.ajax({
+            url: '/system/province/citylist',
+            data: {
+                dbProvinceid: province
+            },
+            type: 'get',
+            success: function (result) {
+                if (result != null && result.length > 0) {
+                    var city = $('#shi');
+                    city.empty();
+                    city.append('<option value="' + "" + '">' + "请选择" + '</option>');
+                    for (var i = 0; i < result.length; i++) {
+                        city.append('<option value="' + result[i].cityid + '">' + result[i].city + '</option>');
+                    }
+                }
+            }
+        });
+    }
+
+    // 改变市后改变县
+    function changeCounty() {
+        var cityid = $("#shi").val();
+        var shi = $("#shi").find("option:selected").text();
+        $("#cities").val(shi);
+        $.ajax({
+            url: '/system/province/arealist',
+            data: {
+                cityid: cityid
+            },
+            type: 'get',
+            success: function (result) {
+                if (result != null && result.length > 0) {
+                    var county = $('#county');
+                    county.empty();
+                    county.append('<option value="' + "" + '">' + "请选择" + '</option>');
+                    for (var i = 0; i < result.length; i++) {
+                        county.append('<option value="' + result[i].area + '">' + result[i].area + '</option>');
+                    }
+                }
+            }
+        });
+    }
+
+    var prefix = ctx + "cundian/point"
+    $("#form-point-add").validate({
+        focusCleanup: true
+    });
+
+
+    /*村点-新增-选择父部门树*/
+    function selectPointTree() {
+        var options = {
+            title: '村点选择',
+            width: "380",
+            url: prefix + "/selectPointTree/" + $("#treeId").val(),
+            callBack: doSubmit
+        };
+        $.modal.openOptions(options);
+    }
+
+    function doSubmit(index, layero) {
+        var body = layer.getChildFrame('body', index);
+        $("#treeId").val(body.find('#treeId').val());
+        $("#treeName").val(body.find('#treeName').val());
+        layer.close(index);
+    }
+
+    function submitHandler() {
+        if ($.validate.form()) {
+            uploadFile();
+        }
+    }
+
+    function uploadFile() {
+        var formData = new FormData();
+             if ($('#picture')[0].files[0] == null) {
+                $.modal.alertWarning("请先选择文件路径");
+                 return false;
+             }
+        var arr = [];
+        $(".aaa").each(function(){
+            if($(this).is(":checked")){
+                var val = $(this).val();
+                arr.push(val);
+            }
+        });
+        // console.log(arr);
+        formData.append('checked',arr);
+        formData.append('villageName', $("#villageName").val());
+        formData.append('provinces', $("#provinces").val());
+        formData.append('cities', $("#cities").val());
+        formData.append('counties', $("#county").val());
+        formData.append('address', $("#address").val());
+        formData.append('longitude', $("#longitude").val());
+        formData.append('latitude', $("#latitude").val());
+        formData.append('head', $("#head").val());
+        formData.append('headPhone', $("#headPhone").val());
+        formData.append('examinationName', $("#examinationName").val());
+        formData.append('examinationPhone', $("#examinationPhone").val());
+        formData.append('examinationTime', $("#examinationTime").val());
+        formData.append('file', $('#picture')[0].files[0]);
+        formData.append('productId', $('#treeId').val());
+
+        $.ajax({
+            url: prefix + "/add",
+            type: 'post',
+            cache: false,
+            data: formData,
+            processData: false,
+            contentType: false,
+            dataType: "json",
+            success: function (result) {
+                $.operate.successCallback(result);
+            }
+        });
+    }
+
+    $("input[name='examinationTime']").datetimepicker({
+        format: "yyyy-mm-dd hh:ii:ss",
+        autoclose: true
+    });
+
+
+    $("input[name='examinationTime']").datetimepicker({
+        format: "yyyy-mm-dd",
+        minView: "month",
+        autoclose: true
+    });
+
+
+</script>
+<script type="text/javascript">
+    function send() {
+        /*debugger;*/
+        var ad = $("#address").val();
+        console.log(ad);
+        layer.open({
+            type: 1,
+            shade: 0,
+            content: $("#allmap"),
+            area: ['800px', '600px'],
+            title: "快递信息",
+            id: "openModal"
+        });
+        // 百度地图API功能
+        var map = new BMap.Map("allmap");
+        var point = new BMap.Point(116.331398, 39.897445);
+        map.centerAndZoom(point, 12);
+        // 创建地址解析器实例
+        var myGeo = new BMap.Geocoder();
+        // 将地址解析结果显示在地图上,并调整地图视野
+        /*var ad=document.getElementById('address').value;*/
+        console.log(ad);
+        myGeo.getPoint(ad, function (point) {
+            if (point) {
+                map.centerAndZoom(point, 16);
+                map.addOverlay(new BMap.Marker(point));
+                document.getElementById('longitude').value = point.lng;
+                document.getElementById('latitude').value = point.lat;
+            } else {
+                alert("您选择地址没有解析到结果!");
+            }
+        }, "北京市");
+    }
+
+</script>
+</body>
+
+</html>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.wuliu.mapper.WuliuTaskMapper">
+    
+    <resultMap type="WuliuTask" id="WuliuTaskResult">
+        <result property="id"    column="id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="estimatedTime"    column="estimated_time"    />
+        <result property="driverNum"    column="driver_num"    />
+        <result property="taskId"    column="task_id"    />
+        <result property="assignedName"    column="assigned_name"    />
+        <result property="isReturn"    column="is_return"    />
+        <result property="endTime"    column="end_time"    />
+        <result property="driverName"    column="driver_name"    />
+        <result property="phone"    column="phone"    />
+    </resultMap>
+
+    <sql id="selectWuliuTaskVo">
+        select id, create_time, estimated_time, driver_num, task_id, assigned_name, is_return, end_time, driver_name, phone from wuliu_task
+    </sql>
+
+    <select id="selectWuliuTaskList" parameterType="WuliuTask" resultMap="WuliuTaskResult">
+        <include refid="selectWuliuTaskVo"/>
+        <where>  
+            <if test="driverNum != null  and driverNum != ''"> and driver_num = #{driverNum}</if>
+            <if test="isReturn != null  and isReturn != ''"> and is_return = #{isReturn}</if>
+            <if test="driverName != null  and driverName != ''"> and driver_name like concat('%', #{driverName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectWuliuTaskById" parameterType="Long" resultMap="WuliuTaskResult">
+        <include refid="selectWuliuTaskVo"/>
+        where id = #{id}
+    </select>
+
+
+    <select id="selectByTeskId" parameterType="string" resultMap="WuliuTaskResult">
+        <include refid="selectWuliuTaskVo"/>
+        where task_id = #{teskId}
+    </select>
+        
+    <insert id="insertWuliuTask" parameterType="WuliuTask" useGeneratedKeys="true" keyProperty="id">
+        insert into wuliu_task
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="createTime != null ">create_time,</if>
+            <if test="estimatedTime != null  and estimatedTime != ''">estimated_time,</if>
+            <if test="driverNum != null  and driverNum != ''">driver_num,</if>
+            <if test="taskId != null  and taskId != ''">task_id,</if>
+            <if test="assignedName != null  and assignedName != ''">assigned_name,</if>
+            <if test="isReturn != null  and isReturn != ''">is_return,</if>
+            <if test="endTime != null ">end_time,</if>
+            <if test="driverName != null  and driverName != ''">driver_name,</if>
+            <if test="phone != null  and phone != ''">phone,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="estimatedTime != null  and estimatedTime != ''">#{estimatedTime},</if>
+            <if test="driverNum != null  and driverNum != ''">#{driverNum},</if>
+            <if test="taskId != null  and taskId != ''">#{taskId},</if>
+            <if test="assignedName != null  and assignedName != ''">#{assignedName},</if>
+            <if test="isReturn != null  and isReturn != ''">#{isReturn},</if>
+            <if test="endTime != null ">#{endTime},</if>
+            <if test="driverName != null  and driverName != ''">#{driverName},</if>
+            <if test="phone != null  and phone != ''">#{phone},</if>
+         </trim>
+    </insert>
+
+    <update id="updateWuliuTask" parameterType="WuliuTask">
+        update wuliu_task
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="estimatedTime != null  and estimatedTime != ''">estimated_time = #{estimatedTime},</if>
+            <if test="driverNum != null  and driverNum != ''">driver_num = #{driverNum},</if>
+            <if test="taskId != null  and taskId != ''">task_id = #{taskId},</if>
+            <if test="assignedName != null  and assignedName != ''">assigned_name = #{assignedName},</if>
+            <if test="isReturn != null  and isReturn != ''">is_return = #{isReturn},</if>
+            <if test="endTime != null ">end_time = #{endTime},</if>
+            <if test="driverName != null  and driverName != ''">driver_name = #{driverName},</if>
+            <if test="phone != null  and phone != ''">phone = #{phone},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteWuliuTaskById" parameterType="Long">
+        delete from wuliu_task where id = #{id}
+    </delete>
+
+    <delete id="deleteWuliuTaskByIds" parameterType="String">
+        delete from wuliu_task where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

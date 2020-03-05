@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.wuliu.mapper.WuliuStatisticalMapper">
+    
+    <resultMap type="WuliuStatistical" id="WuliuStatisticalResult">
+        <result property="id"    column="id"    />
+        <result property="up"    column="up"    />
+        <result property="villagePointName"    column="village_point_name"    />
+        <result property="date"    column="date"    />
+        <result property="down"    column="down"    />
+        <result property="type"    column="type"    />
+    </resultMap>
+
+    <sql id="selectWuliuStatisticalVo">
+        select id, up, village_point_name, date, down, type from wuliu_statistical
+    </sql>
+
+    <select id="selectWuliuStatisticalList" parameterType="WuliuStatistical" resultMap="WuliuStatisticalResult">
+        <include refid="selectWuliuStatisticalVo"/>
+        <where>  
+            <if test="villagePointName != null  and villagePointName != ''"> and village_point_name like concat('%', #{villagePointName}, '%')</if>
+            <if test="type != null  and type != ''"> and type = #{type}</if>
+        </where>
+    </select>
+    
+    <select id="selectWuliuStatisticalById" parameterType="Long" resultMap="WuliuStatisticalResult">
+        <include refid="selectWuliuStatisticalVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertWuliuStatistical" parameterType="WuliuStatistical">
+        insert into wuliu_statistical
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">id,</if>
+            <if test="up != null  and up != ''">up,</if>
+            <if test="villagePointName != null  and villagePointName != ''">village_point_name,</if>
+            <if test="date != null ">date,</if>
+            <if test="down != null  and down != ''">down,</if>
+            <if test="type != null  and type != ''">type,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null ">#{id},</if>
+            <if test="up != null  and up != ''">#{up},</if>
+            <if test="villagePointName != null  and villagePointName != ''">#{villagePointName},</if>
+            <if test="date != null ">#{date},</if>
+            <if test="down != null  and down != ''">#{down},</if>
+            <if test="type != null  and type != ''">#{type},</if>
+         </trim>
+    </insert>
+
+    <update id="updateWuliuStatistical" parameterType="WuliuStatistical">
+        update wuliu_statistical
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="up != null  and up != ''">up = #{up},</if>
+            <if test="villagePointName != null  and villagePointName != ''">village_point_name = #{villagePointName},</if>
+            <if test="date != null ">date = #{date},</if>
+            <if test="down != null  and down != ''">down = #{down},</if>
+            <if test="type != null  and type != ''">type = #{type},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteWuliuStatisticalById" parameterType="Long">
+        delete from wuliu_statistical where id = #{id}
+    </delete>
+
+    <delete id="deleteWuliuStatisticalByIds" parameterType="String">
+        delete from wuliu_statistical where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

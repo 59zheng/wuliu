@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.wuliu.mapper.WuliuDriverMapper">
+    
+    <resultMap type="WuliuDriver" id="WuliuDriverResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="phone"    column="phone"    />
+        <result property="license"    column="license"    />
+        <result property="gender"    column="gender"    />
+        <result property="birthday"    column="birthday"    />
+        <result property="emergencyName"    column="emergency_name"    />
+        <result property="emergencyPhone"    column="emergency_phone"    />
+        <result property="vehicleNum"    column="vehicle_num"    />
+        <result property="gps"    column="gps"    />
+        <result property="note"    column="note"    />
+    </resultMap>
+
+    <sql id="selectWuliuDriverVo">
+        select id, name, phone, license, gender, birthday, emergency_name, emergency_phone, vehicle_num, gps, note from wuliu_driver
+    </sql>
+
+    <select id="selectWuliuDriverList" parameterType="WuliuDriver" resultMap="WuliuDriverResult">
+        <include refid="selectWuliuDriverVo"/>
+        <where>  
+            <if test="license != null  and license != ''"> and license = #{license}</if>
+            <if test="gender != null  and gender != ''"> and gender = #{gender}</if>
+        </where>
+    </select>
+    
+    <select id="selectWuliuDriverById" parameterType="Long" resultMap="WuliuDriverResult">
+        <include refid="selectWuliuDriverVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertWuliuDriver" parameterType="WuliuDriver">
+        insert into wuliu_driver
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">id,</if>
+            <if test="name != null  and name != ''">name,</if>
+            <if test="phone != null  and phone != ''">phone,</if>
+            <if test="license != null  and license != ''">license,</if>
+            <if test="gender != null  and gender != ''">gender,</if>
+            <if test="birthday != null ">birthday,</if>
+            <if test="emergencyName != null  and emergencyName != ''">emergency_name,</if>
+            <if test="emergencyPhone != null  and emergencyPhone != ''">emergency_phone,</if>
+            <if test="vehicleNum != null  and vehicleNum != ''">vehicle_num,</if>
+            <if test="gps != null  and gps != ''">gps,</if>
+            <if test="note != null  and note != ''">note,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null ">#{id},</if>
+            <if test="name != null  and name != ''">#{name},</if>
+            <if test="phone != null  and phone != ''">#{phone},</if>
+            <if test="license != null  and license != ''">#{license},</if>
+            <if test="gender != null  and gender != ''">#{gender},</if>
+            <if test="birthday != null ">#{birthday},</if>
+            <if test="emergencyName != null  and emergencyName != ''">#{emergencyName},</if>
+            <if test="emergencyPhone != null  and emergencyPhone != ''">#{emergencyPhone},</if>
+            <if test="vehicleNum != null  and vehicleNum != ''">#{vehicleNum},</if>
+            <if test="gps != null  and gps != ''">#{gps},</if>
+            <if test="note != null  and note != ''">#{note},</if>
+         </trim>
+    </insert>
+
+    <update id="updateWuliuDriver" parameterType="WuliuDriver">
+        update wuliu_driver
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null  and name != ''">name = #{name},</if>
+            <if test="phone != null  and phone != ''">phone = #{phone},</if>
+            <if test="license != null  and license != ''">license = #{license},</if>
+            <if test="gender != null  and gender != ''">gender = #{gender},</if>
+            <if test="birthday != null ">birthday = #{birthday},</if>
+            <if test="emergencyName != null  and emergencyName != ''">emergency_name = #{emergencyName},</if>
+            <if test="emergencyPhone != null  and emergencyPhone != ''">emergency_phone = #{emergencyPhone},</if>
+            <if test="vehicleNum != null  and vehicleNum != ''">vehicle_num = #{vehicleNum},</if>
+            <if test="gps != null  and gps != ''">gps = #{gps},</if>
+            <if test="note != null  and note != ''">note = #{note},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteWuliuDriverById" parameterType="Long">
+        delete from wuliu_driver where id = #{id}
+    </delete>
+
+    <delete id="deleteWuliuDriverByIds" parameterType="String">
+        delete from wuliu_driver where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

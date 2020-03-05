@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.wuliu.mapper.WuliuSchedulingMapper">
+    
+    <resultMap type="WuliuScheduling" id="WuliuSchedulingResult">
+        <result property="id"    column="id"    />
+        <result property="schedulingId"    column="scheduling_id"    />
+        <result property="taskId"    column="task_id"    />
+        <result property="schedulingType"    column="scheduling_type"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="processingTime"    column="processing_time"    />
+        <result property="processingName"    column="processing_name"    />
+        <result property="delegateName"    column="delegate_name"    />
+        <result property="delegateId"    column="delegate_id"    />
+        <result property="tasknum"    column="tasknum"    />
+        <result property="villageName"    column="village_name"    />
+    </resultMap>
+
+    <sql id="selectWuliuSchedulingVo">
+        select id, scheduling_id, task_id, scheduling_type, create_time, processing_time, processing_name, delegate_name, delegate_id, tasknum, village_name from wuliu_scheduling
+    </sql>
+
+    <select id="selectWuliuSchedulingList" parameterType="WuliuScheduling" resultMap="WuliuSchedulingResult">
+        <include refid="selectWuliuSchedulingVo"/>
+        <where>  
+            <if test="schedulingType != null  and schedulingType != ''"> and scheduling_type = #{schedulingType}</if>
+            <if test="delegateName != null  and delegateName != ''"> and delegate_name like concat('%', #{delegateName}, '%')</if>
+            <if test="tasknum != null  and tasknum != ''"> and tasknum = #{tasknum}</if>
+            <if test="villageName != null  and villageName != ''"> and village_name like concat('%', #{villageName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectWuliuSchedulingById" parameterType="Long" resultMap="WuliuSchedulingResult">
+        <include refid="selectWuliuSchedulingVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertWuliuScheduling" parameterType="WuliuScheduling" useGeneratedKeys="true" keyProperty="id">
+        insert into wuliu_scheduling
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="schedulingId != null  and schedulingId != ''">scheduling_id,</if>
+            <if test="taskId != null  and taskId != ''">task_id,</if>
+            <if test="schedulingType != null  and schedulingType != ''">scheduling_type,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="processingTime != null ">processing_time,</if>
+            <if test="processingName != null  and processingName != ''">processing_name,</if>
+            <if test="delegateName != null  and delegateName != ''">delegate_name,</if>
+            <if test="delegateId != null  and delegateId != ''">delegate_id,</if>
+            <if test="tasknum != null  and tasknum != ''">tasknum,</if>
+            <if test="villageName != null  and villageName != ''">village_name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="schedulingId != null  and schedulingId != ''">#{schedulingId},</if>
+            <if test="taskId != null  and taskId != ''">#{taskId},</if>
+            <if test="schedulingType != null  and schedulingType != ''">#{schedulingType},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="processingTime != null ">#{processingTime},</if>
+            <if test="processingName != null  and processingName != ''">#{processingName},</if>
+            <if test="delegateName != null  and delegateName != ''">#{delegateName},</if>
+            <if test="delegateId != null  and delegateId != ''">#{delegateId},</if>
+            <if test="tasknum != null  and tasknum != ''">#{tasknum},</if>
+            <if test="villageName != null  and villageName != ''">#{villageName},</if>
+         </trim>
+    </insert>
+
+    <update id="updateWuliuScheduling" parameterType="WuliuScheduling">
+        update wuliu_scheduling
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="schedulingId != null  and schedulingId != ''">scheduling_id = #{schedulingId},</if>
+            <if test="taskId != null  and taskId != ''">task_id = #{taskId},</if>
+            <if test="schedulingType != null  and schedulingType != ''">scheduling_type = #{schedulingType},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="processingTime != null ">processing_time = #{processingTime},</if>
+            <if test="processingName != null  and processingName != ''">processing_name = #{processingName},</if>
+            <if test="delegateName != null  and delegateName != ''">delegate_name = #{delegateName},</if>
+            <if test="delegateId != null  and delegateId != ''">delegate_id = #{delegateId},</if>
+            <if test="tasknum != null  and tasknum != ''">tasknum = #{tasknum},</if>
+            <if test="villageName != null  and villageName != ''">village_name = #{villageName},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteWuliuSchedulingById" parameterType="Long">
+        delete from wuliu_scheduling where id = #{id}
+    </delete>
+
+    <delete id="deleteWuliuSchedulingByIds" parameterType="String">
+        delete from wuliu_scheduling where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>
